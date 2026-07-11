@@ -30,6 +30,9 @@ def create_app():
     from app.dashboard import dashboard_bp
     app.register_blueprint(dashboard_bp)
 
+    from app.documents import documents_bp
+    app.register_blueprint(documents_bp)
+
     @app.route("/")
     def home():
         return "Welcome to AI Document Intelligence Platform!"
