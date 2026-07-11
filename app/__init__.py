@@ -2,6 +2,7 @@ from flask import Flask
 
 from config import Config
 from app.extensions import db, login_manager, migrate
+from app.models import User, Document, ExtractedField, ReviewQueue
 
 
 def create_app():
@@ -22,6 +23,6 @@ def create_app():
 
     @app.route("/")
     def home():
-        return "Welcome to AI Resume Analyzer!"
+        return "Welcome to AI Document Intelligence Platform!"
 
     return app

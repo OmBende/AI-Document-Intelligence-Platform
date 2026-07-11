@@ -1,0 +1,52 @@
+from datetime import datetime
+
+from app.extensions import db
+
+
+class ReviewQueue(db.Model):
+    __tablename__ = "review_queue"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    field_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    old_value = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    corrected_value = db.Column(
+        db.Text,
+        nullable=True
+    )
+
+    status = db.Column(
+        db.String(20),
+        default="Pending"
+    )
+
+    reviewed_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+    document_id = db.Column(
+        db.Integer,
+        db.ForeignKey("documents.id"),
+        nullable=False
+    )
+
+    document = db.relationship(
+        "Document",
+        back_populates="review_items"
+    )
+
+    def mark_reviewed(self):
+        self.status = "Reviewed"
+        self.reviewed_at = datetime.utcnow()
+
+    def __repr__(self):
+        return f"<ReviewQueue {self.field_name}>"
