@@ -23,6 +23,8 @@ class Document(db.Model):
         nullable=False
     )
 
+    extracted_text = db.Column(db.Text)
+
     status = db.Column(
         db.String(30),
         default="Uploaded"
