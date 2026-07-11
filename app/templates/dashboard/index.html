@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="text-center">
+    <h1>Dashboard</h1>
+
+    <p class="lead">
+        Welcome, {{ current_user.username }}.
+    </p>
+
+    <p>
+        Your uploaded documents and review items will appear here.
+    </p>
+</div>
+
+{% endblock %}
