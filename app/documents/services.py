@@ -13,7 +13,6 @@ from app.extraction.services import (
 )
 from app.models import Document, ExtractedField
 
-
 def flatten_structured_data(data, parent_key=""):
     """
     Convert nested AI JSON into flat field-name/value pairs.
