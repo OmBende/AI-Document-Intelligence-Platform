@@ -28,5 +28,7 @@ class Config:
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
 
+    TESSERACT_CMD = os.getenv("TESSERACT_CMD")
+
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH"))
 
