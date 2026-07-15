@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Review Queue{% endblock %}
+{% block page_title %}Human Review Queue{% endblock %}
+{% block page_subtitle %}
+Review low-confidence AI extractions
+{% endblock %}
+
+{% block content %}
+
+<div class="app-card">
+
+    <div class="table-card-header">
+        <h5>Pending Review Items</h5>
+        <p>
+            Verify and correct uncertain values extracted by the AI.
+        </p>
+    </div>
+
+    {% if review_items %}
+
+        <div class="table-responsive">
+
+            <table class="table modern-table">
+
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Field</th>
+                        <th>Extracted Value</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in review_items %}
+
+                        <tr>
+
+                            <td>
+                                <div class="document-name">
+
+                                    <div class="document-icon">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </div>
+
+                                    <div>
+                                        <strong>
+                                            {{ item.document.original_filename }}
+                                        </strong>
+
+                                        <div class="text-muted small">
+                                            {{ item.document.document_type }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ item.field_name
+                                    .replace("_", " ")
+                                    .title()
+                                }}
+                            </td>
+
+                            <td>
+                                {{ item.old_value or "Not available" }}
+                            </td>
+
+                            <td>
+                                <span class="status-badge status-review">
+                                    Needs Review
+                                </span>
+                            </td>
+
+                            <td>
+                                <a
+                                    href="{{ url_for(
+                                        'review.edit',
+                                        review_id=item.id
+                                    ) }}"
+                                    class="btn btn-sm btn-primary"
+                                >
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    Review
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+
+            <div class="upload-zone-icon">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+
+            <h5>No pending reviews</h5>
+
+            <p class="text-muted mb-0">
+                All extracted fields have been verified.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

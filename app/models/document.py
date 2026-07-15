@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from app.constants import DOCUMENT_STATUS_UPLOADED
 from app.extensions import db
 
 
@@ -24,10 +24,11 @@ class Document(db.Model):
     )
 
     extracted_text = db.Column(db.Text)
+    ai_summary = db.Column(db.Text)
 
     status = db.Column(
         db.String(30),
-        default="Uploaded"
+        default=DOCUMENT_STATUS_UPLOADED
     )
 
     upload_date = db.Column(

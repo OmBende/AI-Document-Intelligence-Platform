@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.extensions import db
-
+from app.constants import REVIEW_STATUS_PENDING, REVIEW_STATUS_REVIEWED
 
 class ReviewQueue(db.Model):
     __tablename__ = "review_queue"
@@ -24,9 +24,9 @@ class ReviewQueue(db.Model):
     )
 
     status = db.Column(
-        db.String(20),
-        default="Pending"
-    )
+    db.String(20),
+    default=REVIEW_STATUS_PENDING
+)
 
     reviewed_at = db.Column(
         db.DateTime,
@@ -45,7 +45,7 @@ class ReviewQueue(db.Model):
     )
 
     def mark_reviewed(self):
-        self.status = "Reviewed"
+        self.status = REVIEW_STATUS_REVIEWED
         self.reviewed_at = datetime.utcnow()
 
     def __repr__(self):

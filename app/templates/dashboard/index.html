@@ -1,79 +1,226 @@
 {% extends "base.html" %}
 
 {% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}
+Welcome back, {{ current_user.username }}
+{% endblock %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="mb-1">Dashboard</h1>
-        <p class="text-muted mb-0">
-            Welcome, {{ current_user.username }}.
-        </p>
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card">
+
+            <div class="stat-card-header">
+
+                <p class="stat-card-label">
+                    Total Documents
+                </p>
+
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-files"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-card-value">
+                {{ total_documents }}
+            </div>
+
+        </div>
     </div>
 
-    <a
-        href="{{ url_for('documents.upload') }}"
-        class="btn btn-primary"
-    >
-        Upload Document
-    </a>
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card">
+
+            <div class="stat-card-header">
+
+                <p class="stat-card-label">
+                    Completed
+                </p>
+
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-card-value">
+                {{ completed_documents }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card">
+
+            <div class="stat-card-header">
+
+                <p class="stat-card-label">
+                    Pending Review
+                </p>
+
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-card-value">
+                {{ pending_reviews }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card">
+
+            <div class="stat-card-header">
+
+                <p class="stat-card-label">
+                    Average Confidence
+                </p>
+
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-card-value">
+                {{ average_confidence }}%
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-body">
+<div class="app-card">
 
-        <h4 class="mb-3">Your Documents</h4>
-
-        {% if documents %}
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>File</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Uploaded</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for document in documents %}
-                            <tr>
-                                <td>{{ document.original_filename }}</td>
-                                <td>{{ document.document_type }}</td>
-                                <td>{{ document.status }}</td>
-                                <td>
-                                    {{ document.upload_date.strftime("%d %b %Y, %I:%M %p") }}
-                                </td>
-                                <td>
-                                    <a
-                                        href="{{ url_for(
-                                            'documents.detail',
-                                            document_id=document.id
-                                        ) }}"
-                                        class="btn btn-sm btn-outline-primary"
-                                    >
-                                        View
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-        {% else %}
-
-            <div class="alert alert-info mb-0">
-                You have not uploaded any documents yet.
-            </div>
-
-        {% endif %}
-
+    <div class="table-card-header">
+        <h5>Recent Documents</h5>
+        <p>Your latest uploaded and processed documents.</p>
     </div>
+
+    {% if documents %}
+
+        <div class="table-responsive">
+
+            <table class="table modern-table">
+
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Uploaded</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for document in documents %}
+
+                        <tr>
+
+                            <td>
+                                <div class="document-name">
+
+                                    <div class="document-icon">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </div>
+
+                                    <strong>
+                                        {{ document.original_filename }}
+                                    </strong>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ document.document_type }}
+                            </td>
+
+                            <td>
+
+                                {% if document.status == "Completed" %}
+                                    <span class="status-badge status-completed">
+                                        Completed
+                                    </span>
+
+                                {% elif document.status == "Needs Review" %}
+                                    <span class="status-badge status-review">
+                                        Needs Review
+                                    </span>
+
+                                {% elif document.status == "Processing" %}
+                                    <span class="status-badge status-processing">
+                                        Processing
+                                    </span>
+
+                                {% else %}
+                                    <span class="status-badge status-failed">
+                                        {{ document.status }}
+                                    </span>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ document.upload_date.strftime(
+                                    "%d %b %Y"
+                                ) }}
+                            </td>
+
+                            <td>
+                                <a
+                                    href="{{ url_for(
+                                        'documents.detail',
+                                        document_id=document.id
+                                    ) }}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    View
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+
+            <div class="upload-zone-icon">
+                <i class="bi bi-cloud-arrow-up"></i>
+            </div>
+
+            <h5>No documents uploaded</h5>
+
+            <a
+                href="{{ url_for('documents.upload') }}"
+                class="btn btn-primary mt-2"
+            >
+                Upload your first document
+            </a>
+
+        </div>
+
+    {% endif %}
+
 </div>
 
 {% endblock %}

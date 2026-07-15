@@ -32,3 +32,5 @@ class Config:
 
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH"))
 
+    POPPLER_PATH = os.getenv("POPPLER_PATH")
+

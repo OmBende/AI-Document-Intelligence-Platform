@@ -18,15 +18,17 @@ class DocumentUploadForm(FlaskForm):
 
     document_type = SelectField(
         "Document Type",
-        choices=[
-            ("Resume", "Resume"),
-            ("Invoice", "Invoice"),
-            ("Contract", "Contract"),
-            ("Certificate", "Certificate"),
-            ("Form", "Form"),
-            ("Other", "Other")
-        ],
+         choices=[
+                ("Resume", "Resume"),
+                ("Invoice", "Invoice"),
+                ("Receipt", "Receipt"),
+                ("Contract", "Contract"),
+                ("Certificate", "Certificate"),
+                ("Form", "Form"),
+                ("Other", "Other")
+                ],
         validators=[DataRequired()]
     )
 
     submit = SubmitField("Upload Document")
+    
