@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block page_title %}Analytics{% endblock %}
+
+{% block page_subtitle %}
+Monitor document processing, confidence, and review performance
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card h-100">
+            <div class="stat-card-header">
+                <p class="stat-card-label">Total Documents</p>
+
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-files"></i>
+                </div>
+            </div>
+
+            <div class="stat-card-value">
+                {{ total_documents }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card h-100">
+            <div class="stat-card-header">
+                <p class="stat-card-label">Completed</p>
+
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+            </div>
+
+            <div class="stat-card-value">
+                {{ completed_documents }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card h-100">
+            <div class="stat-card-header">
+                <p class="stat-card-label">Pending Reviews</p>
+
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+            </div>
+
+            <div class="stat-card-value">
+                {{ pending_reviews }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="app-card stat-card h-100">
+            <div class="stat-card-header">
+                <p class="stat-card-label">Average Confidence</p>
+
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+
+            <div class="stat-card-value">
+                {{ average_confidence }}%
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-xl-6">
+        <div class="app-card chart-card">
+            <div class="table-card-header">
+                <h5>Documents by Type</h5>
+                <p>Distribution of uploaded document categories.</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="documentTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="app-card chart-card">
+            <div class="table-card-header">
+                <h5>Processing Status</h5>
+                <p>Current state of all uploaded documents.</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+
+    <div class="col-xl-7">
+        <div class="app-card chart-card">
+            <div class="table-card-header">
+                <h5>Uploads During the Last Seven Days</h5>
+                <p>Daily document-upload activity.</p>
+            </div>
+
+            <div class="chart-container chart-container-wide">
+                <canvas id="uploadTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-5">
+        <div class="app-card chart-card">
+            <div class="table-card-header">
+                <h5>Confidence Distribution</h5>
+                <p>Quality of extracted fields.</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="confidenceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const typeLabels = JSON.parse('{{ type_labels | tojson | safe }}');
+    const typeValues = JSON.parse('{{ type_values | tojson | safe }}');
+
+    const statusLabels = JSON.parse('{{ status_labels | tojson | safe }}');
+    const statusValues = JSON.parse('{{ status_values | tojson | safe }}');
+
+    const uploadLabels = JSON.parse('{{ upload_labels | tojson | safe }}');
+    const uploadValues = JSON.parse('{{ upload_values | tojson | safe }}');
+
+    const confidenceLabels = JSON.parse('{{ confidence_labels | tojson | safe }}');
+    const confidenceValues = JSON.parse('{{ confidence_values | tojson | safe }}');
+    const chartColors = [
+        "#4f46e5",
+        "#12b76a",
+        "#f79009",
+        "#f04438",
+        "#175cd3",
+        "#8b5cf6",
+        "#06b6d4"
+    ];
+
+    new Chart(
+        document.getElementById("documentTypeChart"),
+        {
+            type: "doughnut",
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    data: typeValues,
+                    backgroundColor: chartColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "68%",
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        }
+    );
+
+    new Chart(
+        document.getElementById("statusChart"),
+        {
+            type: "pie",
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusValues,
+                    backgroundColor: chartColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        }
+    );
+
+    new Chart(
+        document.getElementById("uploadTrendChart"),
+        {
+            type: "line",
+            data: {
+                labels: uploadLabels,
+                datasets: [{
+                    label: "Uploads",
+                    data: uploadValues,
+                    borderColor: "#4f46e5",
+                    backgroundColor: "rgba(79, 70, 229, 0.12)",
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointBackgroundColor: "#4f46e5"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        }
+    );
+
+    new Chart(
+        document.getElementById("confidenceChart"),
+        {
+            type: "bar",
+            data: {
+                labels: confidenceLabels,
+                datasets: [{
+                    label: "Fields",
+                    data: confidenceValues,
+                    backgroundColor: [
+                        "#12b76a",
+                        "#f79009",
+                        "#f04438"
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        }
+    );
+</script>
+
+{% endblock %}

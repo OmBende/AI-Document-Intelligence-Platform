@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Search Documents{% endblock %}
+
+{% block page_title %}Search Documents{% endblock %}
+
+{% block page_subtitle %}
+Search filenames, AI summaries, document types, and extracted values
+{% endblock %}
+
+{% block content %}
+
+<div class="app-card p-4 mb-4">
+
+    <form method="GET" action="{{ url_for('documents.search') }}">
+
+        <div class="row g-3 align-items-end">
+
+            <div class="col-lg-6">
+
+                <label for="q" class="form-label fw-semibold">
+                    Search
+                </label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input
+                        type="search"
+                        id="q"
+                        name="q"
+                        class="form-control"
+                        placeholder="Search Java, invoice, Om Bende..."
+                        value="{{ query }}"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="col-md-5 col-lg-2">
+
+                <label for="type" class="form-label fw-semibold">
+                    Type
+                </label>
+
+                <select
+                    id="type"
+                    name="type"
+                    class="form-select"
+                >
+                    <option value="">All types</option>
+
+                    {% for item in document_types %}
+                        <option
+                            value="{{ item }}"
+                            {% if selected_type == item %}selected{% endif %}
+                        >
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+            <div class="col-md-5 col-lg-2">
+
+                <label for="status" class="form-label fw-semibold">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-select"
+                >
+                    <option value="">All statuses</option>
+
+                    {% for item in [
+                        "Completed",
+                        "Needs Review",
+                        "Processing",
+                        "Extraction Failed"
+                    ] %}
+                        <option
+                            value="{{ item }}"
+                            {% if selected_status == item %}selected{% endif %}
+                        >
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+            <div class="col-md-2 col-lg-2 d-grid">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Search
+                </button>
+
+            </div>
+
+        </div>
+
+        {% if query or selected_type or selected_status %}
+
+            <div class="mt-3">
+
+                <a
+                    href="{{ url_for('documents.search') }}"
+                    class="btn btn-sm btn-outline-secondary"
+                >
+                    <i class="bi bi-x-circle me-1"></i>
+                    Clear filters
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+        <h5 class="mb-1">Search Results</h5>
+
+        <p class="text-muted mb-0">
+            {{ documents|length }} document(s) found
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('documents.upload') }}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-plus-lg me-1"></i>
+        Upload Document
+    </a>
+
+</div>
+
+
+{% if documents %}
+
+    <div class="row g-4">
+
+        {% for document in documents %}
+
+            <div class="col-lg-6">
+
+                <div class="app-card search-result-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div class="document-icon search-document-icon">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 search-result-title">
+                                    {{ document.original_filename }}
+                                </h5>
+
+                                <div class="d-flex flex-wrap gap-2">
+
+                                    <span class="badge text-bg-light">
+                                        {{ document.document_type }}
+                                    </span>
+
+                                    {% if document.status == "Completed" %}
+                                        <span class="status-badge status-completed">
+                                            Completed
+                                        </span>
+
+                                    {% elif document.status == "Needs Review" %}
+                                        <span class="status-badge status-review">
+                                            Needs Review
+                                        </span>
+
+                                    {% elif document.status == "Processing" %}
+                                        <span class="status-badge status-processing">
+                                            Processing
+                                        </span>
+
+                                    {% else %}
+                                        <span class="status-badge status-failed">
+                                            {{ document.status }}
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <a
+                            href="{{ url_for(
+                                'documents.detail',
+                                document_id=document.id
+                            ) }}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                    {% if document.ai_summary %}
+                        <p class="search-summary">
+                            {{ document.ai_summary }}
+                        </p>
+                    {% else %}
+                        <p class="text-muted">
+                            No AI summary is available.
+                        </p>
+                    {% endif %}
+
+                    <div class="search-result-footer">
+
+                        <span>
+                            <i class="bi bi-calendar3 me-1"></i>
+                            {{ document.upload_date.strftime("%d %b %Y") }}
+                        </span>
+
+                        <span>
+                            <i class="bi bi-list-check me-1"></i>
+                            {{ document.extracted_fields|length }}
+                            fields
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="app-card text-center py-5">
+
+        <div class="upload-zone-icon">
+            <i class="bi bi-search"></i>
+        </div>
+
+        <h5>No documents found</h5>
+
+        <p class="text-muted mb-3">
+            Try a different keyword or clear your filters.
+        </p>
+
+        <a
+            href="{{ url_for('documents.search') }}"
+            class="btn btn-outline-primary"
+        >
+            Clear Search
+        </a>
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

@@ -85,6 +85,24 @@
                 {% endif %}
             </a>
 
+            <a
+                href="{{ url_for('documents.search') }}"
+                class="sidebar-link
+                {% if request.endpoint == 'documents.search' %}active{% endif %}"
+            >
+                <i class="bi bi-search"></i>
+                <span>Search</span>
+            </a>
+
+            <a
+                href="{{ url_for('dashboard.analytics') }}"
+                class="sidebar-link
+                {% if request.endpoint == 'dashboard.analytics' %}active{% endif %}"
+            >
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
         </nav>
 
         <div class="sidebar-user">

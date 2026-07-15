@@ -1,6 +1,6 @@
 from flask import flash, abort, redirect, render_template, request, url_for
 from flask_login import login_required,current_user
-
+from sqlalchemy import or_
 from app.extensions import db
 from app.documents import documents_bp
 from app.documents.forms import DocumentUploadForm
@@ -110,4 +110,68 @@ def edit_field(document_id, field_id):
             "documents.detail",
             document_id=document.id
         )
+    )
+
+@documents_bp.route("/search")
+@login_required
+def search():
+    query = request.args.get("q", "").strip()
+    document_type = request.args.get("type", "").strip()
+    status = request.args.get("status", "").strip()
+
+    documents_query = (
+        Document.query
+        .filter(Document.user_id == current_user.id)
+        .outerjoin(ExtractedField)
+    )
+
+    if query:
+        search_pattern = f"%{query}%"
+
+        documents_query = documents_query.filter(
+            or_(
+                Document.original_filename.ilike(search_pattern),
+                Document.document_type.ilike(search_pattern),
+                Document.ai_summary.ilike(search_pattern),
+                ExtractedField.field_name.ilike(search_pattern),
+                ExtractedField.field_value.ilike(search_pattern)
+            )
+        )
+
+    if document_type:
+        documents_query = documents_query.filter(
+            Document.document_type == document_type
+        )
+
+    if status:
+        documents_query = documents_query.filter(
+            Document.status == status
+        )
+
+    documents = (
+        documents_query
+        .distinct()
+        .order_by(Document.upload_date.desc())
+        .all()
+    )
+
+    document_types = (
+        db.session.query(Document.document_type)
+        .filter(Document.user_id == current_user.id)
+        .distinct()
+        .order_by(Document.document_type.asc())
+        .all()
+    )
+
+    return render_template(
+        "documents/search.html",
+        documents=documents,
+        query=query,
+        selected_type=document_type,
+        selected_status=status,
+        document_types=[
+            item[0]
+            for item in document_types
+            if item[0]
+        ]
     )
