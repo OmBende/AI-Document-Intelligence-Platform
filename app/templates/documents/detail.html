@@ -34,24 +34,24 @@ Review AI-extracted information and confidence scores
                 </span>
 
                 {% if document.status == "Completed" %}
-                    <span class="status-badge status-completed">
-                        Completed
-                    </span>
+                <span class="status-badge status-completed">
+                    Completed
+                </span>
 
                 {% elif document.status == "Needs Review" %}
-                    <span class="status-badge status-review">
-                        Needs Review
-                    </span>
+                <span class="status-badge status-review">
+                    Needs Review
+                </span>
 
                 {% elif document.status == "Processing" %}
-                    <span class="status-badge status-processing">
-                        Processing
-                    </span>
+                <span class="status-badge status-processing">
+                    Processing
+                </span>
 
                 {% else %}
-                    <span class="status-badge status-failed">
-                        {{ document.status }}
-                    </span>
+                <span class="status-badge status-failed">
+                    {{ document.status }}
+                </span>
                 {% endif %}
 
             </div>
@@ -61,18 +61,12 @@ Review AI-extracted information and confidence scores
 
     <div class="d-flex gap-2">
 
-        <a
-            href="{{ url_for('dashboard.index') }}"
-            class="btn btn-outline-secondary"
-        >
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>
             Dashboard
         </a>
 
-        <a
-            href="{{ url_for('documents.upload') }}"
-            class="btn btn-primary"
-        >
+        <a href="{{ url_for('documents.upload') }}" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>
             Upload New
         </a>
@@ -102,14 +96,9 @@ Review AI-extracted information and confidence scores
             </div>
 
             <div class="progress mt-3" style="height: 8px;">
-                <div
-                    class="progress-bar confidence-progress-bar"
-                    role="progressbar"
-                    style="--progress-width: {{ average_confidence }}%;"
-                    aria-valuenow="{{ average_confidence }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                ></div>
+                <div class="progress-bar confidence-progress-bar" role="progressbar"
+                    style="--progress-width: {{ average_confidence }}%;" aria-valuenow="{{ average_confidence }}"
+                    aria-valuemin="0" aria-valuemax="100"></div>
             </div>
 
         </div>
@@ -178,13 +167,13 @@ Review AI-extracted information and confidence scores
     </div>
 
     {% if document.ai_summary %}
-        <p class="mb-0 lh-lg">
-            {{ document.ai_summary }}
-        </p>
+    <p class="mb-0 lh-lg">
+        {{ document.ai_summary }}
+    </p>
     {% else %}
-        <div class="alert alert-info mb-0">
-            No AI summary is available for this document.
-        </div>
+    <div class="alert alert-info mb-0">
+        No AI summary is available for this document.
+    </div>
     {% endif %}
 
 </div>
@@ -202,147 +191,128 @@ Review AI-extracted information and confidence scores
         </div>
 
         {% if document.status == "Needs Review" %}
-            <a
-                href="{{ url_for('review.index') }}"
-                class="btn btn-warning"
-            >
-                <i class="bi bi-exclamation-triangle me-1"></i>
-                Open Review Queue
-            </a>
+        <a href="{{ url_for('review.index') }}" class="btn btn-warning">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            Open Review Queue
+        </a>
         {% endif %}
 
     </div>
 
     {% if fields %}
 
-        <div class="row g-3 p-4">
+    <div class="row g-3 p-4">
 
-            {% for field in fields %}
+        {% for field in fields %}
 
-                {% set percentage = (field.confidence * 100)|round|int %}
+        {% set percentage = (field.confidence * 100)|round|int %}
 
-                <div class="col-lg-6">
+        <div class="col-lg-6">
 
-                    <div class="field-card">
+            <div class="field-card">
 
-                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
 
-                            <div>
-                                <div class="field-name">
-                                    {{ field.field_name
-                                        .replace("_", " ")
-                                        .title()
-                                    }}
-                                </div>
-
-                                <div class="field-value">
-                                    {{ field.field_value or "Not available" }}
-                                </div>
-                            </div>
-
-                            {% if percentage >= 90 %}
-                                <span class="status-badge status-completed">
-                                    {{ percentage }}%
-                                </span>
-
-                            {% elif percentage >= 70 %}
-                                <span class="status-badge status-processing">
-                                    {{ percentage }}%
-                                </span>
-
-                            {% else %}
-                                <span class="status-badge status-review">
-                                    {{ percentage }}%
-                                </span>
-                            {% endif %}
-
+                    <div>
+                        <div class="field-name">
+                            {{ field.field_name
+                            .replace("_", " ")
+                            .title()
+                            }}
                         </div>
 
-                        <div class="confidence mb-3">
+                        <div class="field-value">
+                            {{ field.field_value or "Not available" }}
+                        </div>
+                    </div>
 
-                            <div class="confidence-bar flex-grow-1">
+                    {% if percentage >= 90 %}
+                    <span class="status-badge status-completed">
+                        {{ percentage }}%
+                    </span>
 
-                                <div
-                                    class="confidence-fill
+                    {% elif percentage >= 70 %}
+                    <span class="status-badge status-processing">
+                        {{ percentage }}%
+                    </span>
+
+                    {% else %}
+                    <span class="status-badge status-review">
+                        {{ percentage }}%
+                    </span>
+                    {% endif %}
+
+                </div>
+
+                <div class="confidence mb-3">
+
+                    <div class="confidence-bar flex-grow-1">
+
+                        <div class="confidence-fill
                                     {% if percentage >= 90 %}
                                         confidence-high
                                     {% elif percentage >= 70 %}
                                         confidence-medium
                                     {% else %}
                                         confidence-low
-                                    {% endif %}"
-                                    style="--progress-width: {{ percentage }}%;"
-                                ></div>
-
-                            </div>
-
-                        </div>
-
-                        <button
-                            class="btn btn-sm btn-outline-primary"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#editField{{ field.id }}"
-                        >
-                            <i class="bi bi-pencil-square me-1"></i>
-                            Edit Field
-                        </button>
-
-                        <div
-                            class="collapse mt-3"
-                            id="editField{{ field.id }}"
-                        >
-
-                            <form
-                                method="POST"
-                                action="{{ url_for(
-                                    'documents.edit_field',
-                                    document_id=document.id,
-                                    field_id=field.id
-                                ) }}"
-                            >
-
-                                <textarea
-                                    name="field_value"
-                                    class="form-control mb-2"
-                                    rows="3"
-                                    required
-                                >{{ field.field_value }}</textarea>
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-sm btn-primary"
-                                >
-                                    Save Changes
-                                </button>
-
-                            </form>
-
-                        </div>
+                                    {% endif %}" style="--progress-width: {{ percentage }}%;"></div>
 
                     </div>
 
                 </div>
 
-            {% endfor %}
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#editField{{ field.id }}">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Edit Field
+                </button>
+
+                <div class="collapse mt-3" id="editField{{ field.id }}">
+
+                    <form method="POST" action="{{ url_for(
+        'documents.edit_field',
+        document_id=document.id,
+        field_id=field.id
+    ) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <label for="fieldValue{{ field.id }}" class="visually-hidden">
+                            New value for {{ field.field_name.replace("_", " ") }}
+                        </label>
+
+                        <textarea id="fieldValue{{ field.id }}" name="field_value" class="form-control mb-2" rows="3"
+                            required>{{ field.field_value }}</textarea>
+
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Save Changes
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
 
         </div>
+
+        {% endfor %}
+
+    </div>
 
     {% else %}
 
-        <div class="text-center py-5">
+    <div class="text-center py-5">
 
-            <div class="upload-zone-icon">
-                <i class="bi bi-info-circle"></i>
-            </div>
-
-            <h5>No extracted information</h5>
-
-            <p class="text-muted mb-0">
-                Text extraction or AI processing may have failed.
-            </p>
-
+        <div class="upload-zone-icon">
+            <i class="bi bi-info-circle"></i>
         </div>
+
+        <h5>No extracted information</h5>
+
+        <p class="text-muted mb-0">
+            Text extraction or AI processing may have failed.
+        </p>
+
+    </div>
 
     {% endif %}
 

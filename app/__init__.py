@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for
 from flask_login import current_user
 
 from config import Config
-from app.extensions import db, login_manager, migrate
+from app.extensions import csrf, db, login_manager, migrate
 from app.models import User, Document, ReviewQueue
 
 
@@ -17,6 +17,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app)
 
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "warning"

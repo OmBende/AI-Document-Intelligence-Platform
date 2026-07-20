@@ -8,6 +8,7 @@
 Upload a document for OCR and AI-powered information extraction
 {% endblock %}
 
+
 {% block content %}
 
 <div class="row justify-content-center">
@@ -18,25 +19,32 @@ Upload a document for OCR and AI-powered information extraction
 
             <div class="text-center mb-4">
 
-                <div class="upload-page-icon">
+                <div class="upload-page-icon" aria-hidden="true">
                     <i class="bi bi-cloud-arrow-up-fill"></i>
                 </div>
 
-                <h3 class="mb-2">Upload a new document</h3>
+                <h3 class="mb-2">
+                    Upload a new document
+                </h3>
 
-                <p class="text-muted mb-0">
+                <p class="text-muted mb-0" id="uploadInstructions">
                     Upload a PDF, DOCX, PNG, JPG, or JPEG document.
                 </p>
 
             </div>
 
-            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+
+            <form method="POST" enctype="multipart/form-data" id="uploadForm"
+                data-file-input-id="{{ form.document.id }}">
 
                 {{ form.hidden_tag() }}
 
-                <div class="upload-zone mb-4" id="uploadZone">
 
-                    <div class="upload-zone-icon">
+                <div class="upload-zone mb-4" id="uploadZone" role="button" tabindex="0"
+                    aria-label="Choose or drop a document to upload" aria-describedby="uploadInstructions"
+                    aria-controls="{{ form.document.id }}">
+
+                    <div class="upload-zone-icon" aria-hidden="true">
                         <i class="bi bi-file-earmark-arrow-up"></i>
                     </div>
 
@@ -45,123 +53,131 @@ Upload a document for OCR and AI-powered information extraction
                     </h5>
 
                     <p class="text-muted mb-3">
-                        or select a file from your computer
+                        Or select a file from your computer
                     </p>
 
                     <label for="{{ form.document.id }}" class="btn btn-outline-primary">
-                        <i class="bi bi-folder2-open me-2"></i>
+                        <i class="bi bi-folder2-open me-2" aria-hidden="true"></i>
+
                         Browse Files
                     </label>
 
                     {{ form.document(
-                        class="d-none",
-                        accept=".pdf,.docx,.png,.jpg,.jpeg"
+                    class="d-none",
+                    accept=".pdf,.docx,.png,.jpg,.jpeg"
                     ) }}
 
-                    <div id="selectedFile" class="selected-file mt-4 d-none">
 
-                        <div class="selected-file-icon">
+                    <div id="selectedFile" class="selected-file mt-4 d-none" role="status" aria-live="polite">
+
+                        <div class="selected-file-icon" aria-hidden="true">
                             <i class="bi bi-file-earmark-check"></i>
                         </div>
 
                         <div class="selected-file-info">
+
                             <strong id="selectedFileName"></strong>
+
                             <small id="selectedFileSize"></small>
+
                         </div>
 
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger"
-                            id="removeFile"
-                        >
-                            <i class="bi bi-x-lg"></i>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile"
+                            aria-label="Remove selected file">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>
                         </button>
 
                     </div>
 
+
                     {% for error in form.document.errors %}
-                        <div class="text-danger small mt-3">
-                            {{ error }}
-                        </div>
+
+                    <div class="text-danger small mt-3" role="alert">
+                        {{ error }}
+                    </div>
+
                     {% endfor %}
 
                 </div>
+
 
                 <div class="mb-4">
 
                     {{ form.document_type.label(
-                        class="form-label fw-semibold"
+                    class="form-label fw-semibold"
                     ) }}
 
                     {{ form.document_type(
-                        class="form-select"
+                    class="form-select",
+                    aria_describedby="documentTypeHelp"
                     ) }}
 
-                    <div class="form-text">
+                    <div class="form-text" id="documentTypeHelp">
                         Select the correct document type for better AI extraction.
                     </div>
 
                     {% for error in form.document_type.errors %}
-                        <div class="text-danger small mt-1">
-                            {{ error }}
-                        </div>
+
+                    <div class="text-danger small mt-1" role="alert">
+                        {{ error }}
+                    </div>
+
                     {% endfor %}
 
                 </div>
 
-                <div class="supported-formats mb-4">
+
+                <div class="supported-formats mb-4" aria-label="Supported file formats">
 
                     <div class="supported-format">
-                        <i class="bi bi-filetype-pdf"></i>
+                        <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
                         <span>PDF</span>
                     </div>
 
                     <div class="supported-format">
-                        <i class="bi bi-filetype-docx"></i>
+                        <i class="bi bi-filetype-docx" aria-hidden="true"></i>
                         <span>DOCX</span>
                     </div>
 
                     <div class="supported-format">
-                        <i class="bi bi-filetype-png"></i>
+                        <i class="bi bi-filetype-png" aria-hidden="true"></i>
                         <span>PNG</span>
                     </div>
 
                     <div class="supported-format">
-                        <i class="bi bi-filetype-jpg"></i>
+                        <i class="bi bi-filetype-jpg" aria-hidden="true"></i>
                         <span>JPG</span>
                     </div>
 
                 </div>
 
+
                 <div class="d-flex justify-content-between align-items-center gap-3">
 
-                    <a
-                        href="{{ url_for('dashboard.index') }}"
-                        class="btn btn-outline-secondary"
-                    >
-                        <i class="bi bi-arrow-left me-1"></i>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>
+
                         Cancel
                     </a>
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary px-4"
-                        id="uploadButton"
-                    >
+                    <button type="submit" class="btn btn-primary px-4" id="uploadButton" aria-busy="false">
+
                         <span id="uploadButtonText">
-                            <i class="bi bi-cloud-arrow-up me-2"></i>
+
+                            <i class="bi bi-cloud-arrow-up me-2" aria-hidden="true"></i>
+
                             Upload and Process
+
                         </span>
 
-                        <span
-                            id="uploadSpinner"
-                            class="d-none"
-                        >
-                            <span
-                                class="spinner-border spinner-border-sm me-2"
-                            ></span>
+                        <span id="uploadSpinner" class="d-none">
+
+                            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+
                             Processing document...
+
                         </span>
+
                     </button>
 
                 </div>
@@ -170,51 +186,69 @@ Upload a document for OCR and AI-powered information extraction
 
         </div>
 
+
         <div class="row g-3 mt-2">
 
             <div class="col-md-4">
+
                 <div class="upload-info-card">
 
-                    <div class="stat-icon icon-purple">
+                    <div class="stat-icon icon-purple" aria-hidden="true">
                         <i class="bi bi-shield-check"></i>
                     </div>
 
                     <div>
                         <strong>Secure Upload</strong>
-                        <p>Your document remains private.</p>
+
+                        <p>
+                            Your document remains private.
+                        </p>
                     </div>
 
                 </div>
+
             </div>
 
+
             <div class="col-md-4">
+
                 <div class="upload-info-card">
 
-                    <div class="stat-icon icon-blue">
+                    <div class="stat-icon icon-blue" aria-hidden="true">
                         <i class="bi bi-eye-fill"></i>
                     </div>
 
                     <div>
                         <strong>OCR Processing</strong>
-                        <p>Reads text from images and scanned PDFs.</p>
+
+                        <p>
+                            Reads text from images and scanned PDFs.
+                        </p>
                     </div>
 
                 </div>
+
             </div>
 
+
             <div class="col-md-4">
+
                 <div class="upload-info-card">
 
-                    <div class="stat-icon icon-green">
+                    <div class="stat-icon icon-green" aria-hidden="true">
                         <i class="bi bi-stars"></i>
                     </div>
 
                     <div>
                         <strong>Local AI</strong>
-                        <p>Extracts structured data using Ollama.</p>
+
+                        <p>
+                            Extracts structured data using Ollama.
+                        </p>
                     </div>
 
                 </div>
+
             </div>
 
         </div>
@@ -223,78 +257,241 @@ Upload a document for OCR and AI-powered information extraction
 
 </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+
 <script>
-    const uploadZone = document.getElementById("uploadZone");
-    const fileInput = document.getElementById("{{ form.document.id }}");
-    const selectedFile = document.getElementById("selectedFile");
-    const selectedFileName = document.getElementById("selectedFileName");
-    const selectedFileSize = document.getElementById("selectedFileSize");
-    const removeFile = document.getElementById("removeFile");
-    const uploadForm = document.getElementById("uploadForm");
-    const uploadButton = document.getElementById("uploadButton");
-    const uploadButtonText = document.getElementById("uploadButtonText");
-    const uploadSpinner = document.getElementById("uploadSpinner");
+    document.addEventListener("DOMContentLoaded", function () {
+        const uploadZone =
+            document.getElementById("uploadZone");
 
-    function formatFileSize(bytes) {
-        if (bytes < 1024) {
-            return `${bytes} bytes`;
-        }
+        const uploadForm =
+            document.getElementById("uploadForm");
 
-        if (bytes < 1024 * 1024) {
-            return `${(bytes / 1024).toFixed(1)} KB`;
-        }
+        const selectedFile =
+            document.getElementById("selectedFile");
 
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    }
+        const selectedFileName =
+            document.getElementById("selectedFileName");
 
-    function showSelectedFile(file) {
-        if (!file) {
-            selectedFile.classList.add("d-none");
+        const selectedFileSize =
+            document.getElementById("selectedFileSize");
+
+        const removeFile =
+            document.getElementById("removeFile");
+
+        const uploadButton =
+            document.getElementById("uploadButton");
+
+        const uploadButtonText =
+            document.getElementById("uploadButtonText");
+
+        const uploadSpinner =
+            document.getElementById("uploadSpinner");
+
+
+        if (
+            !uploadZone ||
+            !uploadForm ||
+            !selectedFile ||
+            !selectedFileName ||
+            !selectedFileSize ||
+            !removeFile ||
+            !uploadButton ||
+            !uploadButtonText ||
+            !uploadSpinner
+        ) {
+            console.error(
+                "One or more upload-page elements could not be found."
+            );
+
             return;
         }
 
-        selectedFileName.textContent = file.name;
-        selectedFileSize.textContent = formatFileSize(file.size);
-        selectedFile.classList.remove("d-none");
-    }
 
-    fileInput.addEventListener("change", function () {
-        showSelectedFile(fileInput.files[0]);
-    });
+        const fileInputId =
+            uploadForm.dataset.fileInputId;
 
-    uploadZone.addEventListener("dragover", function (event) {
-        event.preventDefault();
-        uploadZone.classList.add("drag-active");
-    });
+        const fileInput =
+            document.getElementById(fileInputId);
 
-    uploadZone.addEventListener("dragleave", function () {
-        uploadZone.classList.remove("drag-active");
-    });
 
-    uploadZone.addEventListener("drop", function (event) {
-        event.preventDefault();
-        uploadZone.classList.remove("drag-active");
+        if (!fileInput) {
+            console.error(
+                "The document file input could not be found."
+            );
 
-        if (!event.dataTransfer.files.length) {
             return;
         }
 
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(event.dataTransfer.files[0]);
 
-        fileInput.files = dataTransfer.files;
-        showSelectedFile(fileInput.files[0]);
-    });
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return `${bytes} bytes`;
+            }
 
-    removeFile.addEventListener("click", function () {
-        fileInput.value = "";
-        selectedFile.classList.add("d-none");
-    });
+            if (bytes < 1024 * 1024) {
+                return `${(bytes / 1024).toFixed(1)} KB`;
+            }
 
-    uploadForm.addEventListener("submit", function () {
-        uploadButton.disabled = true;
-        uploadButtonText.classList.add("d-none");
-        uploadSpinner.classList.remove("d-none");
+            return `${(
+                bytes /
+                (1024 * 1024)
+            ).toFixed(1)} MB`;
+        }
+
+
+        function showSelectedFile(file) {
+            if (!file) {
+                selectedFile.classList.add("d-none");
+                selectedFileName.textContent = "";
+                selectedFileSize.textContent = "";
+
+                return;
+            }
+
+            selectedFileName.textContent = file.name;
+            selectedFileSize.textContent =
+                formatFileSize(file.size);
+
+            selectedFile.classList.remove("d-none");
+        }
+
+
+        function openFilePicker() {
+            fileInput.click();
+        }
+
+
+        fileInput.addEventListener(
+            "change",
+            function () {
+                showSelectedFile(fileInput.files[0]);
+            }
+        );
+
+
+        uploadZone.addEventListener(
+            "click",
+            function (event) {
+                if (
+                    event.target.closest(
+                        "label, button, input"
+                    )
+                ) {
+                    return;
+                }
+
+                openFilePicker();
+            }
+        );
+
+
+        uploadZone.addEventListener(
+            "keydown",
+            function (event) {
+                if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+                    event.preventDefault();
+                    openFilePicker();
+                }
+            }
+        );
+
+
+        uploadZone.addEventListener(
+            "dragover",
+            function (event) {
+                event.preventDefault();
+
+                uploadZone.classList.add(
+                    "drag-active"
+                );
+            }
+        );
+
+
+        uploadZone.addEventListener(
+            "dragleave",
+            function () {
+                uploadZone.classList.remove(
+                    "drag-active"
+                );
+            }
+        );
+
+
+        uploadZone.addEventListener(
+            "drop",
+            function (event) {
+                event.preventDefault();
+
+                uploadZone.classList.remove(
+                    "drag-active"
+                );
+
+                const droppedFiles =
+                    event.dataTransfer.files;
+
+                if (!droppedFiles.length) {
+                    return;
+                }
+
+                const dataTransfer =
+                    new DataTransfer();
+
+                dataTransfer.items.add(
+                    droppedFiles[0]
+                );
+
+                fileInput.files =
+                    dataTransfer.files;
+
+                showSelectedFile(
+                    fileInput.files[0]
+                );
+            }
+        );
+
+
+        removeFile.addEventListener(
+            "click",
+            function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                fileInput.value = "";
+
+                showSelectedFile(null);
+
+                uploadZone.focus();
+            }
+        );
+
+
+        uploadForm.addEventListener(
+            "submit",
+            function () {
+                uploadButton.disabled = true;
+
+                uploadButton.setAttribute(
+                    "aria-busy",
+                    "true"
+                );
+
+                uploadButtonText.classList.add(
+                    "d-none"
+                );
+
+                uploadSpinner.classList.remove(
+                    "d-none"
+                );
+            }
+        );
     });
 </script>
 

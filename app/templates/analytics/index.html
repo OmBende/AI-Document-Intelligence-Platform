@@ -8,16 +8,21 @@
 Monitor document processing, confidence, and review performance
 {% endblock %}
 
+
 {% block content %}
 
+<!-- Statistics -->
 <div class="row g-4 mb-4">
 
     <div class="col-md-6 col-xl-3">
         <div class="app-card stat-card h-100">
-            <div class="stat-card-header">
-                <p class="stat-card-label">Total Documents</p>
 
-                <div class="stat-icon icon-purple">
+            <div class="stat-card-header">
+                <p class="stat-card-label">
+                    Total Documents
+                </p>
+
+                <div class="stat-icon icon-purple" aria-hidden="true">
                     <i class="bi bi-files"></i>
                 </div>
             </div>
@@ -25,15 +30,20 @@ Monitor document processing, confidence, and review performance
             <div class="stat-card-value">
                 {{ total_documents }}
             </div>
+
         </div>
     </div>
 
+
     <div class="col-md-6 col-xl-3">
         <div class="app-card stat-card h-100">
-            <div class="stat-card-header">
-                <p class="stat-card-label">Completed</p>
 
-                <div class="stat-icon icon-green">
+            <div class="stat-card-header">
+                <p class="stat-card-label">
+                    Completed
+                </p>
+
+                <div class="stat-icon icon-green" aria-hidden="true">
                     <i class="bi bi-check2-circle"></i>
                 </div>
             </div>
@@ -41,15 +51,20 @@ Monitor document processing, confidence, and review performance
             <div class="stat-card-value">
                 {{ completed_documents }}
             </div>
+
         </div>
     </div>
 
+
     <div class="col-md-6 col-xl-3">
         <div class="app-card stat-card h-100">
-            <div class="stat-card-header">
-                <p class="stat-card-label">Pending Reviews</p>
 
-                <div class="stat-icon icon-orange">
+            <div class="stat-card-header">
+                <p class="stat-card-label">
+                    Pending Reviews
+                </p>
+
+                <div class="stat-icon icon-orange" aria-hidden="true">
                     <i class="bi bi-exclamation-circle"></i>
                 </div>
             </div>
@@ -57,15 +72,20 @@ Monitor document processing, confidence, and review performance
             <div class="stat-card-value">
                 {{ pending_reviews }}
             </div>
+
         </div>
     </div>
 
+
     <div class="col-md-6 col-xl-3">
         <div class="app-card stat-card h-100">
-            <div class="stat-card-header">
-                <p class="stat-card-label">Average Confidence</p>
 
-                <div class="stat-icon icon-blue">
+            <div class="stat-card-header">
+                <p class="stat-card-label">
+                    Average Confidence
+                </p>
+
+                <div class="stat-icon icon-blue" aria-hidden="true">
                     <i class="bi bi-graph-up-arrow"></i>
                 </div>
             </div>
@@ -73,36 +93,54 @@ Monitor document processing, confidence, and review performance
             <div class="stat-card-value">
                 {{ average_confidence }}%
             </div>
+
         </div>
     </div>
 
 </div>
 
+
+<!-- Document Type and Status Charts -->
 <div class="row g-4 mb-4">
 
     <div class="col-xl-6">
-        <div class="app-card chart-card">
+        <div class="app-card chart-card h-100">
+
             <div class="table-card-header">
                 <h5>Documents by Type</h5>
-                <p>Distribution of uploaded document categories.</p>
+
+                <p>
+                    Distribution of uploaded document categories.
+                </p>
             </div>
 
             <div class="chart-container">
-                <canvas id="documentTypeChart"></canvas>
+                <canvas id="documentTypeChart" role="img" aria-label="Doughnut chart showing documents grouped by type">
+                    Documents grouped by type.
+                </canvas>
             </div>
+
         </div>
     </div>
 
+
     <div class="col-xl-6">
-        <div class="app-card chart-card">
+        <div class="app-card chart-card h-100">
+
             <div class="table-card-header">
                 <h5>Processing Status</h5>
-                <p>Current state of all uploaded documents.</p>
+
+                <p>
+                    Current state of all uploaded documents.
+                </p>
             </div>
 
             <div class="chart-container">
-                <canvas id="statusChart"></canvas>
+                <canvas id="statusChart" role="img" aria-label="Pie chart showing document processing statuses">
+                    Document processing statuses.
+                </canvas>
             </div>
+
         </div>
     </div>
 
@@ -111,179 +149,313 @@ Monitor document processing, confidence, and review performance
 <div class="row g-4">
 
     <div class="col-xl-7">
-        <div class="app-card chart-card">
+        <div class="app-card chart-card h-100">
+
             <div class="table-card-header">
-                <h5>Uploads During the Last Seven Days</h5>
-                <p>Daily document-upload activity.</p>
+                <h5>
+                    Uploads During the Last Seven Days
+                </h5>
+
+                <p>
+                    Daily document-upload activity.
+                </p>
             </div>
 
             <div class="chart-container chart-container-wide">
-                <canvas id="uploadTrendChart"></canvas>
+                <canvas id="uploadTrendChart" role="img"
+                    aria-label="Line chart showing uploads during the last seven days">
+                    Document uploads during the last seven days.
+                </canvas>
             </div>
+
         </div>
     </div>
 
+
     <div class="col-xl-5">
-        <div class="app-card chart-card">
+        <div class="app-card chart-card h-100">
+
             <div class="table-card-header">
-                <h5>Confidence Distribution</h5>
-                <p>Quality of extracted fields.</p>
+                <h5>
+                    Confidence Distribution
+                </h5>
+
+                <p>
+                    Quality of extracted fields.
+                </p>
             </div>
 
             <div class="chart-container">
-                <canvas id="confidenceChart"></canvas>
+                <canvas id="confidenceChart" role="img"
+                    aria-label="Bar chart showing extracted-field confidence distribution">
+                    Extracted-field confidence distribution.
+                </canvas>
             </div>
+
         </div>
     </div>
 
 </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script id="analyticsData" type="application/json">
+{{
+    {
+        "typeLabels": type_labels,
+        "typeValues": type_values,
+        "statusLabels": status_labels,
+        "statusValues": status_values,
+        "uploadLabels": upload_labels,
+        "uploadValues": upload_values,
+        "confidenceLabels": confidence_labels,
+        "confidenceValues": confidence_values
+    } | tojson
+}}
+</script>
+
+
 <script>
-    const typeLabels = JSON.parse('{{ type_labels | tojson | safe }}');
-    const typeValues = JSON.parse('{{ type_values | tojson | safe }}');
+    document.addEventListener("DOMContentLoaded", function () {
+        const analyticsDataElement =
+            document.getElementById("analyticsData");
 
-    const statusLabels = JSON.parse('{{ status_labels | tojson | safe }}');
-    const statusValues = JSON.parse('{{ status_values | tojson | safe }}');
-
-    const uploadLabels = JSON.parse('{{ upload_labels | tojson | safe }}');
-    const uploadValues = JSON.parse('{{ upload_values | tojson | safe }}');
-
-    const confidenceLabels = JSON.parse('{{ confidence_labels | tojson | safe }}');
-    const confidenceValues = JSON.parse('{{ confidence_values | tojson | safe }}');
-    const chartColors = [
-        "#4f46e5",
-        "#12b76a",
-        "#f79009",
-        "#f04438",
-        "#175cd3",
-        "#8b5cf6",
-        "#06b6d4"
-    ];
-
-    new Chart(
-        document.getElementById("documentTypeChart"),
-        {
-            type: "doughnut",
-            data: {
-                labels: typeLabels,
-                datasets: [{
-                    data: typeValues,
-                    backgroundColor: chartColors,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: "68%",
-                plugins: {
-                    legend: {
-                        position: "bottom"
-                    }
-                }
-            }
+        if (!analyticsDataElement) {
+            console.error("Analytics data element was not found.");
+            return;
         }
-    );
 
-    new Chart(
-        document.getElementById("statusChart"),
-        {
-            type: "pie",
-            data: {
-                labels: statusLabels,
-                datasets: [{
-                    data: statusValues,
-                    backgroundColor: chartColors,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: "bottom"
-                    }
-                }
-            }
+        let analyticsData;
+
+        try {
+            analyticsData = JSON.parse(
+                analyticsDataElement.textContent
+            );
+        } catch (error) {
+            console.error(
+                "Unable to parse analytics data:",
+                error
+            );
+
+            return;
         }
-    );
 
-    new Chart(
-        document.getElementById("uploadTrendChart"),
-        {
-            type: "line",
-            data: {
-                labels: uploadLabels,
-                datasets: [{
-                    label: "Uploads",
-                    data: uploadValues,
-                    borderColor: "#4f46e5",
-                    backgroundColor: "rgba(79, 70, 229, 0.12)",
-                    fill: true,
-                    tension: 0.35,
-                    pointRadius: 4,
-                    pointBackgroundColor: "#4f46e5"
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
+        const typeLabels =
+            analyticsData.typeLabels || [];
+
+        const typeValues =
+            analyticsData.typeValues || [];
+
+        const statusLabels =
+            analyticsData.statusLabels || [];
+
+        const statusValues =
+            analyticsData.statusValues || [];
+
+        const uploadLabels =
+            analyticsData.uploadLabels || [];
+
+        const uploadValues =
+            analyticsData.uploadValues || [];
+
+        const confidenceLabels =
+            analyticsData.confidenceLabels || [];
+
+        const confidenceValues =
+            analyticsData.confidenceValues || [];
+
+
+        const chartColors = [
+            "#4f46e5",
+            "#12b76a",
+            "#f79009",
+            "#f04438",
+            "#175cd3",
+            "#8b5cf6",
+            "#06b6d4"
+        ];
+
+
+        const documentTypeCanvas =
+            document.getElementById(
+                "documentTypeChart"
+            );
+
+        const statusCanvas =
+            document.getElementById(
+                "statusChart"
+            );
+
+        const uploadTrendCanvas =
+            document.getElementById(
+                "uploadTrendChart"
+            );
+
+        const confidenceCanvas =
+            document.getElementById(
+                "confidenceChart"
+            );
+
+
+        if (documentTypeCanvas) {
+            new Chart(documentTypeCanvas, {
+                type: "doughnut",
+
+                data: {
+                    labels: typeLabels,
+
+                    datasets: [
+                        {
+                            data: typeValues,
+                            backgroundColor: chartColors,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "68%",
+
+                    plugins: {
+                        legend: {
+                            position: "bottom"
                         }
                     }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
                 }
-            }
+            });
         }
-    );
 
-    new Chart(
-        document.getElementById("confidenceChart"),
-        {
-            type: "bar",
-            data: {
-                labels: confidenceLabels,
-                datasets: [{
-                    label: "Fields",
-                    data: confidenceValues,
-                    backgroundColor: [
-                        "#12b76a",
-                        "#f79009",
-                        "#f04438"
-                    ],
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
+
+        if (statusCanvas) {
+            new Chart(statusCanvas, {
+                type: "pie",
+
+                data: {
+                    labels: statusLabels,
+
+                    datasets: [
+                        {
+                            data: statusValues,
+                            backgroundColor: chartColors,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            position: "bottom"
                         }
                     }
+                }
+            });
+        }
+
+
+        if (uploadTrendCanvas) {
+            new Chart(uploadTrendCanvas, {
+                type: "line",
+
+                data: {
+                    labels: uploadLabels,
+
+                    datasets: [
+                        {
+                            label: "Uploads",
+                            data: uploadValues,
+                            borderColor: "#4f46e5",
+                            backgroundColor:
+                                "rgba(79, 70, 229, 0.12)",
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 4,
+                            pointBackgroundColor:
+                                "#4f46e5"
+                        }
+                    ]
                 },
-                plugins: {
-                    legend: {
-                        display: false
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     }
                 }
-            }
+            });
         }
-    );
+
+
+        if (confidenceCanvas) {
+            new Chart(confidenceCanvas, {
+                type: "bar",
+
+                data: {
+                    labels: confidenceLabels,
+
+                    datasets: [
+                        {
+                            label: "Fields",
+                            data: confidenceValues,
+
+                            backgroundColor: [
+                                "#12b76a",
+                                "#f79009",
+                                "#f04438"
+                            ],
+
+                            borderRadius: 8
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 {% endblock %}
